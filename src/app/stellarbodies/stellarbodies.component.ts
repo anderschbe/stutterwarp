@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 
 import { StellarBody } from './stellarbody';
 import { StellarBodyService } from './stellarbody.service';
@@ -9,17 +9,23 @@ import { StellarBodyService } from './stellarbody.service';
   styleUrls: ['./stellarbodies.component.css']
 })
 export class StellarBodiesComponent implements OnInit {
-  title = '';
-  stellarBodies: StellarBody[];
-  selectedStellarBody: StellarBody;
+  @Output() public eventStellarBody: EventEmitter<StellarBody> = new EventEmitter();
+  public stellarBodies: StellarBody[];
+  public selectedStellarBody: StellarBody;
+  public selectedStellarBodyParentName: string;
 
   constructor(private stellarBodyService: StellarBodyService) {}
 
-  getStellarBodies(): void {
-    this.stellarBodyService.getStellarBodies().then(stellarBodies => this.stellarBodies = stellarBodies);
+  private getStellarBodies(): void {
+    this.stellarBodyService.getStellarBodies().then(obj => this.stellarBodies = obj);
   }
 
-  ngOnInit(): void {
+  private async selectStellarBody() {
+    this.eventStellarBody.next(this.selectedStellarBody);
+    this.selectedStellarBodyParentName = (await this.stellarBodyService.getStellarBody(this.selectedStellarBody.parent)).name;
+  }
+
+  public ngOnInit(): void {
     this.getStellarBodies();
   }
 }

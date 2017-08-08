@@ -1,7 +1,8 @@
 <div class="form-group">
-  <select [(ngModel)]="selectedStellarBody" required>
+  <select [(ngModel)]="selectedStellarBody" (change)="selectStellarBody()" required>
     <option *ngFor="let stellarBody of stellarBodies" [ngValue]="stellarBody">{{stellarBody.name}}</option>
   </select>
 </div>
 
-<app-stellarbody-detail *ngIf="selectedStellarBody" [stellarBody]="selectedStellarBody"></app-stellarbody-detail>
+<app-stellarbody-detail *ngIf="selectedStellarBody" [stellarBody]="selectedStellarBody" [ParentName]="selectedStellarBodyParentName"></app-stellarbody-detail>
+

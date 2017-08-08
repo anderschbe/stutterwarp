@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { StellarBodyService } from '../stellarbodies/stellarbody.service';
+import { StellarBody } from '../stellarbodies/stellarbody';
 
 @Component({
   selector: 'app-start',
@@ -6,5 +8,11 @@ import { Component } from '@angular/core';
   styleUrls: ['./start.component.css']
 })
 export class StartComponent {
-  title = 'start';
+  public title = 'start';
+
+  constructor(private stellarBodyService: StellarBodyService) {}
+
+  private receiveStellarBody(stellarBody: StellarBody) {
+    this.stellarBodyService.sendStart(stellarBody);
+  }
 }

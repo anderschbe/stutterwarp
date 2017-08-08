@@ -1,1 +1,7 @@
 <h1>{{title}}</h1>
+ <div *ngIf="start">{{start.name}}
+    <li *ngFor="let grav of gravs">
+        <b> {{grav.toPrecision(3)}} m/s² </b>           
+    </li>
+ </div>
+ <div *ngIf="stop">{{stop.name}}</div> 

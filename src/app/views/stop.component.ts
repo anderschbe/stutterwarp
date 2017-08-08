@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { StellarBody } from '../stellarbodies/stellarbody';
+import { StellarBodyService } from '../stellarbodies/stellarbody.service';
 
 @Component({
   selector: 'app-stop',
@@ -6,5 +8,11 @@ import { Component } from '@angular/core';
   styleUrls: ['./stop.component.css']
 })
 export class StopComponent {
-  title = 'stop';
+  public title = 'stop';
+
+  constructor(private stellarBodyService: StellarBodyService) {}
+
+  private receiveStellarBody(stellarBody: StellarBody) {
+    this.stellarBodyService.sendStop(stellarBody);
+  }
 }

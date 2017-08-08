@@ -1,4 +1,4 @@
-export class StellarBody {
+export interface StellarBody {
   id: number;
   name: string;
   mass: number;

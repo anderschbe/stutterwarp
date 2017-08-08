@@ -10,5 +10,5 @@ import { StellarBodyService } from './stellarbodies/stellarbody.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'stutterwarp calculator';
+  public title = 'stutterwarp calculator';
 }
