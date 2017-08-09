@@ -1,12 +1,12 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 
-import { StellarBody } from './stellarbody';
-import { StellarBodyService } from './stellarbody.service';
+import { StellarBody } from './utils/stellarbody';
+import { StellarBodyService } from './utils/stellarbody.service';
 
 @Component({
   selector: 'app-stellarbodies',
   templateUrl: './stellarbodies.component.html',
-  styleUrls: ['./stellarbodies.component.css']
+  styleUrls: ['./stellarbodies.component.scss']
 })
 export class StellarBodiesComponent implements OnInit {
   @Output() public eventStellarBody: EventEmitter<StellarBody> = new EventEmitter();

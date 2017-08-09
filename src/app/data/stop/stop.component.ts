@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
-import { StellarBody } from '../stellarbodies/stellarbody';
-import { StellarBodyService } from '../stellarbodies/stellarbody.service';
+import { StellarBody } from '../../stellarbodies/utils/stellarbody';
+import { StellarBodyService } from '../../stellarbodies/utils/stellarbody.service';
 
 @Component({
   selector: 'app-stop',
   templateUrl: './stop.component.html',
-  styleUrls: ['./stop.component.css']
 })
 export class StopComponent {
   public title = 'stop';

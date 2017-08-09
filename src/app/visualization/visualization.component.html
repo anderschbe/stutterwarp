@@ -1,0 +1,6 @@
+<div *ngIf="distance">{{distance.toPrecision(3)}} m</div>
+<div *ngIf="gravs">{{gravs.toPrecision(3)}} m/s²
+    <li *ngFor="let gravector of gravectors">
+        <b> {{gravector.grav.toPrecision(3)}} m/s² </b>           
+    </li>
+</div>

@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { StellarBody } from './stellarbody';
+import { StellarBody } from '../utils/stellarbody';
 
 @Component({
     selector: 'app-stellarbody-detail',

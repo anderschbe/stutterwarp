@@ -1,4 +1,4 @@
-<div class="form-group">
+<div class="form-control">
   <select [(ngModel)]="selectedStellarBody" (change)="selectStellarBody()" required>
     <option *ngFor="let stellarBody of stellarBodies" [ngValue]="stellarBody">{{stellarBody.name}}</option>
   </select>
