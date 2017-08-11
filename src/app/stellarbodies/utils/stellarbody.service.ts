@@ -13,8 +13,12 @@ export class StellarBodyService {
         return Promise.resolve(STELLAR_BODIES);
     }
 
-    public getStellarBody(sid: number): Promise<StellarBody> {
+    public getStellarBodyById(sid: number): Promise<StellarBody> {
         return Promise.resolve(STELLAR_BODIES.find(myObj => myObj.id === sid));
+    }
+
+    public getStellarBodyByName(name: string): Promise<StellarBody> {
+        return Promise.resolve(STELLAR_BODIES.find(myObj => myObj.name === name));
     }
 
     public sendStart(stellarBody: StellarBody) {

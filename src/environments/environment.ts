@@ -5,5 +5,7 @@
 
 export const environment = {
   production: false,
-  conG: 6.67408E-11
+  conG: 6.67408E-11,
+  conC: 299792458,
+  conL: 1.61622938E-35
 };
