@@ -1,0 +1,6 @@
+<div *ngIf="stellarBody">
+  <div><label>mass: </label>{{stellarBody.mass.toPrecision(3)}} kg</div>
+  <div><label>parent: </label>{{ParentName}}</div>
+  <div><label>parentDistance: </label>{{stellarBody.parentDistance.toPrecision(3)}} m</div>
+  <div><label>radius: </label>{{stellarBody.radius.toPrecision(3)}} m</div>
+</div>

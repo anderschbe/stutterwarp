@@ -1,0 +1,8 @@
+<div class="form-control">
+  <label for="stellarBody">StellarBody</label> 
+  <input id="typeahead-basic" type="text" [(ngModel)]="model" [ngbTypeahead]="searchText" (selectItem)="selectStellarBody($event)"/>
+  <label for="orbit">Orbit (in m)</label>
+  <input type="text" id="orbit" [(ngModel)]="orbit" (keyup.enter)="onEnter()" required> 
+</div>
+<app-stellarbody-detail *ngIf="selectedStellarBody" [stellarBody]="selectedStellarBody" [ParentName]="selectedStellarBodyParentName"></app-stellarbody-detail>
+
