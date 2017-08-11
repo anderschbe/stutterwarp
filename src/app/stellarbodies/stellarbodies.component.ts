@@ -11,11 +11,12 @@ import { Observable } from 'rxjs/Rx';
 })
 export class StellarBodiesComponent implements OnInit {
   @Output() public eventStellarBody: EventEmitter<StellarBody> = new EventEmitter();
-  // @Output() public eventOrbit: EventEmitter<string> = new EventEmitter();
+  @Output() public eventOrbit: EventEmitter<number> = new EventEmitter();
   public stellarBodies: StellarBody[];
   public selectedStellarBody: StellarBody;
   public selectedStellarBodyParentName: string;
   public model: string;
+  public orbit: number;
   public searchText = (text$: Observable<string>) =>
     text$
       .debounceTime(100)
@@ -33,6 +34,10 @@ export class StellarBodiesComponent implements OnInit {
     this.selectedStellarBody = await this.stellarBodyService.getStellarBodyByName(event.item);
     this.eventStellarBody.next(this.selectedStellarBody);
     this.selectedStellarBodyParentName = (await this.stellarBodyService.getStellarBodyById(this.selectedStellarBody.parent)).name;
+  }
+
+  public onEnter() {
+    this.eventOrbit.next(Number(this.orbit));
   }
 
   public ngOnInit(): void {

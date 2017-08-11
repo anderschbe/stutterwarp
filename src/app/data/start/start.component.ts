@@ -14,4 +14,8 @@ export class StartComponent {
   private receiveStellarBody(stellarBody: StellarBody) {
     this.stellarBodyService.sendStart(stellarBody);
   }
+
+  private receiveOrbit(orbit: number) {
+    this.stellarBodyService.sendStartOrbit(orbit);
+  }
 }

@@ -14,4 +14,8 @@ export class StopComponent {
   private receiveStellarBody(stellarBody: StellarBody) {
     this.stellarBodyService.sendStop(stellarBody);
   }
+
+  private receiveOrbit(orbit: number) {
+    this.stellarBodyService.sendStopOrbit(orbit);
+  }
 }

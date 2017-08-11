@@ -7,7 +7,10 @@ import { StellarBody } from './stellarbody';
 @Injectable()
 export class StellarBodyService {
     private start = new Subject<StellarBody>();
+    private startOrbit = new Subject<number>();
     private stop = new Subject<StellarBody>();
+    private stopOrbit = new Subject<number>();
+    private distance = new Subject<number>();
 
     public getStellarBodies(): Promise<StellarBody[]> {
         return Promise.resolve(STELLAR_BODIES);
@@ -29,11 +32,35 @@ export class StellarBodyService {
         return this.start.asObservable();
     }
 
+    public sendStartOrbit(orbit: number) {
+        this.startOrbit.next(orbit);
+    }
+
+    public getStartOrbit(): Observable<number> {
+        return this.startOrbit.asObservable();
+    }
+
     public sendStop(stellarBody: StellarBody) {
         this.stop.next(stellarBody);
     }
 
     public getStop(): Observable<StellarBody> {
         return this.stop.asObservable();
+    }
+
+    public sendStopOrbit(orbit: number) {
+        this.stopOrbit.next(orbit);
+    }
+
+    public getStopOrbit(): Observable<number> {
+        return this.stopOrbit.asObservable();
+    }
+
+    public sendDistance(distance: number) {
+        this.distance.next(distance);
+    }
+
+    public getDistance(): Observable<number> {
+        return this.distance.asObservable();
     }
 }

@@ -1,4 +1,4 @@
-<h3 *ngIf="distanceStartStop">Distance {{start.name}} (Orbit: {{startOrbit.toPrecision(3)}}) to {{stop.name}}(Orbit: {{stopOrbit.toPrecision(3)}}): {{distanceStartStop.toPrecision(3)}} m</h3>
+<h3>Distance {{start.name}} (Orbit: {{startOrbit.toPrecision(3)}}) to {{stop.name}}(Orbit: {{stopOrbit.toPrecision(3)}}): {{distanceStartStop.toPrecision(3)}} m</h3>
 <div *ngIf="grav">{{grav.toPrecision(3)}} m/s²
     <li *ngFor="let gravector of gravectors">
         <b> {{gravector.grav.toPrecision(3)}} m/s² </b>           

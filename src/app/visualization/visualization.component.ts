@@ -19,15 +19,19 @@ export class VisualizationComponent implements OnDestroy {
   public title = 'Stutterwarp Calculator';
   public start: StellarBody;
   public stop: StellarBody;
-  private startOrbit = 1E+5;
-  private stopOrbit = 1E+4;
+  private startOrbit: number;
+  private stopOrbit: number;
   private startSubscription: Subscription;
   private stopSubscription: Subscription;
+  private startOrbitSubscription: Subscription;
+  private stopOrbitSubscription: Subscription;
+  private distanceSubscription: Subscription;
   public distanceStartStop: number;
   public currentDistance: number;
   public range: number;
   public gravectors: Gravector[];
   public jumps: Jump[] = [];
+  private initiate = false;
 
   constructor(private stellarBodyService: StellarBodyService) {
     this.startSubscription = this.stellarBodyService.getStart().subscribe(obj => {
@@ -42,15 +46,36 @@ export class VisualizationComponent implements OnDestroy {
         this.initData();
       }
     });
+    this.startOrbitSubscription = this.stellarBodyService.getStartOrbit().subscribe(obj => {
+      this.startOrbit = obj;
+      if (this.stop !== undefined && this.start !== undefined) {
+        this.initData();
+     }
+    });
+    this.stopOrbitSubscription = this.stellarBodyService.getStopOrbit().subscribe(obj => {
+      this.stopOrbit = obj;
+      if (this.stop !== undefined && this.start !== undefined) {
+        this.initData();
+     }
+    });
+    this.distanceSubscription = this.stellarBodyService.getDistance().subscribe(obj => {
+      this.distanceStartStop = obj;
+      this.initData();
+    });
   }
 
   public ngOnDestroy(): void {
     this.startSubscription.unsubscribe();
     this.startSubscription.unsubscribe();
+    this.startOrbitSubscription.unsubscribe();
+    this.stopOrbitSubscription.unsubscribe();
+    this.distanceSubscription.unsubscribe();
   }
 
   private async initData() {
-    this.distanceStartStop = 384400000 - this.startOrbit - this.stopOrbit;
+    this.startOrbit = (this.startOrbit === undefined) ? 0 : this.startOrbit;
+    this.stopOrbit = (this.stopOrbit === undefined) ? 0 : this.stopOrbit;
+    this.distanceStartStop = (this.distanceStartStop === undefined) ? 1E+17 : this.distanceStartStop;
 
     this.gravectors = [];
     this.jumps = [];
@@ -62,7 +87,7 @@ export class VisualizationComponent implements OnDestroy {
       distance = tempDistance;
     }
     await this.calcGravector(stellarBody, distance); // Universe
-    await this.calcGravector(this.stop, this.distanceStartStop - this.startOrbit - this.stopOrbit); // stop.stellarBody
+    await this.calcGravector(this.stop, this.distanceStartStop); // stop.stellarBody
     this.grav = this.maxGrav(this.gravectors);
     this.range = this.calcJump(this.gravectors, 1);
   }
