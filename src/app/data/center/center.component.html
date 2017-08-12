@@ -2,5 +2,5 @@
   <label for="distance">Distance (in m)</label>
   <input type="text" id="distance" [(ngModel)]="distance" (keyup.enter)="onEnter()" required> 
 <button type="button" class="btn btn-success">>></button>
-<button type="button" class="btn btn-info">></button>
+<button type="button" class="btn btn-info" (click)="oneJump($event)">></button>
 <button type="button" class="btn btn-danger">x</button>

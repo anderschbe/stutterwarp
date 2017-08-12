@@ -13,4 +13,8 @@ export class DataComponent {
   private receiveDistance(distance: number) {
     this.stellarBodyService.sendDistance(distance);
   }
+
+    private receiveJump(jump: boolean) {
+    this.stellarBodyService.sendJump(jump);
+  }
 }

@@ -14,11 +14,10 @@ import { Jump } from '../stellarbodies/utils/jump';
   styleUrls: ['./visualization.component.scss']
 })
 export class VisualizationComponent implements OnDestroy {
-  public grav: number;
-
   public title = 'Stutterwarp Calculator';
   public start: StellarBody;
   public stop: StellarBody;
+
   private startOrbit: number;
   private stopOrbit: number;
   private startSubscription: Subscription;
@@ -26,42 +25,95 @@ export class VisualizationComponent implements OnDestroy {
   private startOrbitSubscription: Subscription;
   private stopOrbitSubscription: Subscription;
   private distanceSubscription: Subscription;
+  private jumpSubscription: Subscription;
+
   public distanceStartStop: number;
   public currentDistance: number;
-  public range: number;
+  public jumps: Jump[];
   public gravectors: Gravector[];
-  public jumps: Jump[] = [];
-  private initiate = false;
+  public currentJump: number;
+
+  public efficiency = 50000;
 
   constructor(private stellarBodyService: StellarBodyService) {
     this.startSubscription = this.stellarBodyService.getStart().subscribe(obj => {
       this.start = obj;
-      if (this.stop !== undefined) {
-        this.initData();
-     }
+      this.canInitialize();
     });
     this.stopSubscription = this.stellarBodyService.getStop().subscribe(obj => {
       this.stop = obj;
-      if (this.start !== undefined) {
-        this.initData();
-      }
+      this.canInitialize();
     });
     this.startOrbitSubscription = this.stellarBodyService.getStartOrbit().subscribe(obj => {
       this.startOrbit = obj;
-      if (this.stop !== undefined && this.start !== undefined) {
-        this.initData();
-     }
+      this.canInitialize();
     });
     this.stopOrbitSubscription = this.stellarBodyService.getStopOrbit().subscribe(obj => {
       this.stopOrbit = obj;
-      if (this.stop !== undefined && this.start !== undefined) {
-        this.initData();
-     }
+      this.canInitialize();
     });
     this.distanceSubscription = this.stellarBodyService.getDistance().subscribe(obj => {
       this.distanceStartStop = obj;
-      this.initData();
+      this.canInitialize();
     });
+    this.jumpSubscription = this.stellarBodyService.getJump().subscribe(obj => {
+      if (this.jumps !== undefined) {
+        this.continuousJump();
+      }
+    });
+  }
+
+  private canInitialize() {
+    if (this.start !== undefined && this.stop !== undefined && this.distanceStartStop !== undefined) {
+      this.initData();
+    }
+  }
+
+  private async initData() {
+    this.startOrbit = (this.startOrbit === undefined) ? 0 : this.startOrbit;
+    this.stopOrbit = (this.stopOrbit === undefined) ? 0 : this.stopOrbit;
+    this.currentDistance = 0;
+    this.jumps = [];
+    this.jump();
+  }
+
+    private async calcGravectors() {
+    this.gravectors = [];
+    let stellarBody = this.start;
+    let distance = stellarBody.radius + this.startOrbit + this.currentDistance;
+    while (stellarBody.id !== 0) { // all parents except Universe
+      const tempDistance = stellarBody.parentDistance;
+      stellarBody = await this.calcGravector(stellarBody, distance);
+      distance = tempDistance;
+    }
+    await this.calcGravector(stellarBody, distance); // Universe
+    await this.calcGravector(this.stop, this.distanceStartStop - this.currentDistance); // stop.stellarBody
+  }
+
+  private calcGravector(stellarBody: StellarBody, distance: number): Promise<StellarBody> {
+      this.gravectors.push(new Gravector(stellarBody.id, stellarBody.radius, environment.conG * stellarBody.mass / distance ** 2));
+      return this.stellarBodyService.getStellarBodyById(stellarBody.parent);
+  }
+
+  private maxGrav(arrGrav: Gravector[]): number {
+    return arrGrav.sort((a , b) => (a.grav < b.grav) ? 1 : -1)[0].grav;
+  }
+
+  private async jump() {
+    await this.calcGravectors();
+    this.calcJump();
+  }
+
+  private async calcJump() {
+    const result = new Jump(this.gravectors, this.efficiency / this.maxGrav(this.gravectors) ** 0.5, this.efficiency);
+    this.jumps.push(result);
+    this.currentDistance += result.range;
+  }
+
+  private async continuousJump() {
+    while (this.distanceStartStop - this.currentDistance - this.stop.radius - this.stopOrbit > 0) {
+      await this.jump();
+    }
   }
 
   public ngOnDestroy(): void {
@@ -70,46 +122,6 @@ export class VisualizationComponent implements OnDestroy {
     this.startOrbitSubscription.unsubscribe();
     this.stopOrbitSubscription.unsubscribe();
     this.distanceSubscription.unsubscribe();
-  }
-
-  private async initData() {
-    this.startOrbit = (this.startOrbit === undefined) ? 0 : this.startOrbit;
-    this.stopOrbit = (this.stopOrbit === undefined) ? 0 : this.stopOrbit;
-    this.distanceStartStop = (this.distanceStartStop === undefined) ? 1E+17 : this.distanceStartStop;
-
-    this.gravectors = [];
-    this.jumps = [];
-    let stellarBody = this.start;
-    let distance = stellarBody.radius + this.startOrbit;
-    while (stellarBody.id !== 0) { // all parents except Universe
-      const tempDistance = stellarBody.parentDistance;
-      stellarBody = await this.calcGravector(stellarBody, distance);
-      distance = tempDistance;
-    }
-    await this.calcGravector(stellarBody, distance); // Universe
-    await this.calcGravector(this.stop, this.distanceStartStop); // stop.stellarBody
-    this.grav = this.maxGrav(this.gravectors);
-    this.range = this.calcJump(this.gravectors, 1);
-  }
-
-  private maxGrav(arrGrav: Gravector[]): number {
-    return this.gravectors.sort((a , b) => (a.grav < b.grav) ? 1 : -1)[0].grav;
-  }
-
-  private calcGravector(stellarBody: StellarBody, distance: number): Promise<StellarBody> {
-      this.gravectors.push(new Gravector(stellarBody.id, stellarBody.radius, environment.conG * stellarBody.mass / distance ** 2));
-      return this.stellarBodyService.getStellarBodyById(stellarBody.parent);
-  }
-
-  private calcJump(gravector: Gravector[], efficiency: number): number {
-    const result = new Jump(gravector, efficiency / this.maxGrav(gravector) ** 0.5, efficiency);
-    this.jumps.push(result);
-    return result.range;
-  }
-
-  private continuousJump() {
-    while (this.currentDistance > 0) {
-
-    }
+    this.jumpSubscription.unsubscribe();
   }
 }
