@@ -34,6 +34,7 @@ export class VisualizationComponent implements OnDestroy {
   public currentJump: number;
 
   public efficiency = 50000;
+  private stepping: string;
 
   constructor(private stellarBodyService: StellarBodyService) {
     this.startSubscription = this.stellarBodyService.getStart().subscribe(obj => {
@@ -58,7 +59,12 @@ export class VisualizationComponent implements OnDestroy {
     });
     this.jumpSubscription = this.stellarBodyService.getJump().subscribe(obj => {
       if (this.jumps !== undefined) {
-        this.continuousJump();
+        this.stepping = obj;
+        if (obj === 'continuous') {
+          this.continuousJump();
+        } else if (obj === 'once') {
+          this.jump();
+        }
       }
     });
   }
@@ -104,16 +110,17 @@ export class VisualizationComponent implements OnDestroy {
     this.calcJump();
   }
 
+  private async continuousJump() {
+    while (this.stepping !== 'stop' && this.distanceStartStop - this.currentDistance - this.stop.radius - this.stopOrbit > 0) {
+      await this.calcGravectors();
+      await this.calcJump();
+    }
+  }
+
   private async calcJump() {
     const result = new Jump(this.gravectors, this.efficiency / this.maxGrav(this.gravectors) ** 0.5, this.efficiency);
     this.jumps.push(result);
     this.currentDistance += result.range;
-  }
-
-  private async continuousJump() {
-    while (this.distanceStartStop - this.currentDistance - this.stop.radius - this.stopOrbit > 0) {
-      await this.jump();
-    }
   }
 
   public ngOnDestroy(): void {

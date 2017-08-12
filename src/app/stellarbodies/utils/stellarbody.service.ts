@@ -11,7 +11,7 @@ export class StellarBodyService {
     private stop = new Subject<StellarBody>();
     private stopOrbit = new Subject<number>();
     private distance = new Subject<number>();
-    private jump = new Subject<boolean>();
+    private jump = new Subject<string>();
 
     public getStellarBodies(): Promise<StellarBody[]> {
         return Promise.resolve(STELLAR_BODIES);
@@ -65,11 +65,11 @@ export class StellarBodyService {
         return this.distance.asObservable();
     }
 
-    public sendJump(jump: boolean) {
+    public sendJump(jump: string) {
         this.jump.next(jump);
     }
 
-    public getJump(): Observable<boolean> {
+    public getJump(): Observable<string> {
         return this.jump.asObservable();
     }
 }
